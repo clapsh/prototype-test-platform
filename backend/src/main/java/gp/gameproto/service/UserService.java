@@ -2,8 +2,7 @@ package gp.gameproto.service;
 
 import gp.gameproto.db.entity.User;
 import gp.gameproto.db.repository.UserRepository;
-import gp.gameproto.dto.AddUserRequest;
-import gp.gameproto.dto.UserLoginRequest;
+import gp.gameproto.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class UserService {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()){
             return "이메일이 존재합니다.";
         }
-        System.out.println("UserService.save"+ dto);
         userRepository.save(User.builder()
                 .email(dto.getEmail())
                 .pw(bCryptPasswordEncoder.encode(dto.getPw()))
@@ -53,5 +51,49 @@ public class UserService {
         return "비밀번호가 일치하지 않습니다.";
     }
 
+    @Transactional(readOnly=true)
+    public User findById(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+id));
+        return user;
+    }
+
+    // 회원정보 수정
+    @Transactional
+    public User updateInfo(Long userid, UpdateUserRequest request){
+        User user = userRepository.findById(userid)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+userid));
+
+        user.updateInfo(
+                request.getName(),
+                request.getGender(),
+                request.getAge(),
+                request.getNation(),
+                request.getBio(),
+                request.getFavCategory1(),
+                request.getFavCategory2(),
+                request.getFavCategory3()
+        );
+
+        return user;
+    }
+
+    @Transactional
+    public User updateBio (Long userid, UpdateUserBioRequest request){
+        User user = userRepository.findById(userid)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ userid));
+
+        user.updateBio(request.getBio());
+        return user;
+    }
+
+    @Transactional
+    public User updateName (Long userid, UpdateUserNameRequest request){
+        User user = userRepository.findById(userid)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ userid));
+
+        user.updateName(request.getName());
+        return user;
+    }
 }
 

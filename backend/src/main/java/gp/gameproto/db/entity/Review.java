@@ -1,5 +1,7 @@
 package gp.gameproto.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gp.gameproto.dto.UpdateReviewRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +37,17 @@ public class Review {
     @Column(nullable = false)
     private String status;
 
+    // 연관관계 매핑
+    @ManyToOne
+    @JoinColumn(name = "user_id") // 연관관계 연결을 위한 column
+    private User user; // 연관관계 주인
+
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "test_id")
+    private Test test;
+
     // 객체 생성자
     @Builder
     public Review(String text, LocalDateTime createdAt, LocalDateTime modifiedAt, Character deleted,String status ){
@@ -44,13 +57,27 @@ public class Review {
         this.status = status;
     }
 
-    // 연관관계 매핑
-    @ManyToOne
-    @JoinColumn(name = "user_id") // 연관관계 연결을 위한 column
-    private User user; // 연관관계 주인
+    // User와 연관관계 매핑
+    public void mappingUser(User user){
+        this.user = user;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    private Test test;
+    // Test와 연관관계 매핑
+    public void mappingTest(Test test){
+        this.test = test;
+    }
+
+    // 리뷰 수정
+    public Review update (UpdateReviewRequest request){
+        this.text = request.getText();
+        this.modifiedAt = LocalDateTime.now();
+
+        return this;
+    }
+
+    // 리뷰 삭제
+    public void delete(){
+        this.deleted = 'Y';
+    }
 
 }

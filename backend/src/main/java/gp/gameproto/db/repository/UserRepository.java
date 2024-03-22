@@ -1,5 +1,6 @@
 package gp.gameproto.db.repository;
 
+import gp.gameproto.db.entity.ReviewSummary;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,18 @@ public class UserRepository {
             System.out.println("### ERROR:"+e+"###");
             user = Optional.empty();
         }
+        return user;
+    }
+
+    public Optional<User> findById(Long id){
+        Optional<User> user = null;
+        try{
+            user = Optional.ofNullable(em.find(User.class, id));
+        }catch (NoResultException e) {
+            System.out.println("### ERROR:"+e+"###");
+            user = Optional.empty();
+        }
+        System.out.println("++++"+user);
         return user;
     }
 

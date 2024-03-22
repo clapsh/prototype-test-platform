@@ -1,11 +1,14 @@
 package gp.gameproto.db.entity;
 
+import gp.gameproto.dto.UpdateGameRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import gp.gameproto.db.entity.Test;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,14 +24,30 @@ public class Game {
     @Column(nullable = false)
     private String name;
 
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private Category category;
+
     // 생성자
-    public Game(String name){
+    @Builder
+    public Game(String name, LocalDateTime createdAt, Category category){
         this.name = name;
+        this.createdAt = createdAt;
+        this.category = category;
     }
 
-    // 연관관계 매핑
-    @OneToMany(mappedBy = "game")
-    private List<Test> testList;
+    // 연관관계 매핑 (양방향)?
+    /*@OneToMany(mappedBy = "game")
+    private List<Test> testList;*/
+
+
+    // 게임 정보 수정
+    public Game update(UpdateGameRequest request){
+        this.name = request.getName();
+        this.category = request.getCategory();
+        return this;
+    }
 
 
 

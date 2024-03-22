@@ -34,7 +34,7 @@ public class WebSecurityConfig { // 실제 인증 처리를 하는 시큐리티 
         return http
                 .authorizeRequests(auth -> auth // 3. 인증 , 인가 설정
                         .requestMatchers("/login", "/signup").permitAll() // -> permitAll() 인증/인가 없이 접근 가능
-                        .anyRequest().authenticated() //-> anyRequest : requestMatchers 이외 모든 요청, authenticated 인증 필요, 인가 불필요
+                        .anyRequest().permitAll()//authenticated() //-> anyRequest : requestMatchers 이외 모든 요청, authenticated 인증 필요, 인가 불필요
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout( logout -> logout // 5. 로그아웃 설정

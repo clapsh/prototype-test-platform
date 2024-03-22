@@ -6,7 +6,7 @@ import lombok.Getter;
 import gp.gameproto.db.entity.User;
 import gp.gameproto.db.entity.Test;
 import lombok.NoArgsConstructor;
-
+////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!DELETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,8 +16,6 @@ public class UserTest {
     @Column(name = "user_test_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    //
 
     //연관관계 매핑
     @ManyToOne

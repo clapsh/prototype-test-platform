@@ -1,17 +1,14 @@
 package gp.gameproto.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gp.gameproto.dto.UpdateTestRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
-import gp.gameproto.db.entity.Dibs;
-import gp.gameproto.db.entity.Review;
-import gp.gameproto.db.entity.UserTest;
-import gp.gameproto.db.entity.ReviewSummary;
-import gp.gameproto.db.entity.Game;
-import gp.gameproto.db.entity.GameCategory;
+
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -56,14 +53,32 @@ public class Test {
 
     private String status;
 
-    @Column(nullable = false)
-    private String gameName;
+    // 연관관계 매핑
+
+    @OneToMany(mappedBy = "test")
+    private List<Dibs> dibsList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "test")
+    private List<Review> reviewList;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(mappedBy = "test")
+    private ReviewSummary reviewSummary;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
 
     // 생성자
     @Builder
     public Test(Integer round, String description, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime reviewDate,
                 LocalDateTime createdAt, Integer recruitedTotal, String downloadLink, Character deleted, String imgPath,
-                String status, String gameName){
+                String status){
         this.round = round;
         this.description = description;
         this.startDate = startDate;
@@ -75,28 +90,39 @@ public class Test {
         this.deleted = deleted;
         this.imgPath = imgPath;
         this.status = status;
-        this.gameName = gameName;
     }
 
-    // 연관관계 매핑
+    // User와 연관관계 매핑
+    public void mappingUser(User user){
+        this.user = user;
+        user.addTest(this);// -> 필요?
+    }
+    // Game와 연관관계 매핑
+    public void mappingGame(Game game){
+        this.game = game;
+    }
+    // 테스트 정보 수정
+    public Test update(UpdateTestRequest request){
+        this.round = request.getRound();
+        this.description = request.getDescription();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.reviewDate = request.getReviewDate();
+        this.modifiedAt = LocalDateTime.now();
+        this.recruitedTotal = request.getRecruitedTotal();
+        this.downloadLink = request.getDownloadLink();
+        this.imgPath = request.getImgPath();
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE)
-    private List<Dibs> dibsList;
+        return this;
+    }
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE)
-    private List<Review> reviewList;
+    // review list에 추가하는 메서드
+    public void addReview(Review review){
+        this.reviewList.add(review);
+    }
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.REMOVE)
-    private List<UserTest> userTestList;
-
-    @OneToOne(mappedBy = "test", cascade = CascadeType.REMOVE)
-    private ReviewSummary reviewSummary;
-
-    @ManyToOne
-    @JoinColumn(name = "game_id")
-    private Game game; // 이거 필요한건가??
-
-    @OneToMany(mappedBy = "test")
-    private List<GameCategory> gameCategoryList;
-
+    // test 삭제
+    public void delete(){
+        this.deleted = 'Y';
+    }
 }

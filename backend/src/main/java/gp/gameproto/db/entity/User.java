@@ -1,5 +1,6 @@
 package gp.gameproto.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -66,6 +67,18 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
 
     private String status;
 
+    // 연관관계 매핑
+    @OneToMany(mappedBy = "user")//유저을 삭제하면 그에 달린 팔로워들도 모두 삭제되도록 cascade = CascadeType.REMOVE를 사용했다
+    private List<Follow> followList; //팔로우 목록
+
+    /*
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviewList; // 리뷰 목록
+*/
+    //@JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Test> tests;
+
     // 객체 생성자
     @Builder
     public User(String email, String pw, String name, String bio, Gender gender, String nation, Integer age, String imgPath,
@@ -84,15 +97,6 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
         this.favCategory3 = favCategory3;
     }
 
-    // 연관관계 매핑
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)//유저을 삭제하면 그에 달린 팔로워들도 모두 삭제되도록 cascade = CascadeType.REMOVE를 사용했다
-    private List<Follow> followList; //팔로우 목록
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Review> reviewList; // 리뷰 목록
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<UserTest> userTestList;
 
     @Override //권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities(){
@@ -133,5 +137,37 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
         // 계정이 사용 가능한지 확인하는 로직
         return true;
     }
+
+    // 요청 받은 내용으로 수정하는 메서드 (회원정보 변경)
+    public void updateInfo(String name, Gender gender, Integer age, String nation, String bio,
+                           Category c1, Category c2, Category c3){
+        this.name = name;
+        this.gender = gender;
+        this.age = age;
+        this.nation = nation;
+        this.bio = bio;
+        this.favCategory1 = c1;
+        this.favCategory2 = c2;
+        this.favCategory3 = c3;
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    // 소개글 수정
+    public void updateBio (String bio){
+        this.bio = bio;
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    // 닉네임 수정
+    public void updateName (String name){
+        this.name = name;
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    // test list에 추가하는 메서드
+    public void addTest(Test test){
+        this.tests.add(test);
+    }
+
 
 }

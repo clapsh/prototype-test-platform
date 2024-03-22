@@ -21,14 +21,16 @@ public class GameCategory {
     @Column(nullable = false)
     private Category category;
 
+    // 연관관계 매핑
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
+
     // 생성자
     @Builder
     public GameCategory(Category category){
         this.category = category;
     }
 
-    // 연관관계 매핑
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    private Test test;
+    public void mappingGame(Game game) {this.game = game;}
 }
