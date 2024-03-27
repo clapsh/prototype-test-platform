@@ -59,14 +59,14 @@ public class TestApiController {
 
     // 프로젝트 제작시 기존 프로젝트 불러오기
     @GetMapping("/build/{testId}")
-    public ResponseEntity<GetExistingTestRequest> findExistingTestById (@PathVariable("testId") Long id){
+    public ResponseEntity<GetExistingTestResponse> findExistingTestById (@PathVariable("testId") Long id){
         Test test = testService.findById(id);
         // test가 삭제되었을 경우
         //if (test.getDeleted() == 'Y')
 
         // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new GetExistingTestRequest(test));
+                .body(new GetExistingTestResponse(test));
     }
 
     // 유저별 최근 제작 게임 리스트로 불러오기 (프로젝트 제작시)
@@ -112,5 +112,14 @@ public class TestApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
+    }
+
+    // 찜 Top10 개 프로젝트 가져오기
+    @GetMapping("top10")
+    public ResponseEntity<GetTop10Response> getTop10Games (){
+        List<Test> tests = testService.findTop10Games();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetTop10Response(tests));
     }
 }

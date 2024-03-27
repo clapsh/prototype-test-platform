@@ -1,9 +1,6 @@
 package gp.gameproto.controller;
 
-import gp.gameproto.dto.AddReviewRequest;
-import gp.gameproto.dto.GetReviewResponse;
-import gp.gameproto.dto.GetReviewUserResponse;
-import gp.gameproto.dto.UpdateReviewRequest;
+import gp.gameproto.dto.*;
 import gp.gameproto.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -64,6 +61,25 @@ public class ReviewApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
+    }
+
+    // 리뷰 개선 여부
+    @GetMapping("/reflected/{reviewId}")
+    public ResponseEntity<String> isReviewReflected(@PathVariable("reviewId")Long id){
+        String isReflected = reviewService.isReflected(id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(isReflected);
+    }
+
+
+    // 리뷰 개선 여부 변경
+    @PutMapping("/reflected/{reviewId}")
+    public ResponseEntity<Review> changeStatusOfReview(@PathVariable("reviewId")Long id, @RequestBody UpdateReviewStatusRequest request){
+        Review review = reviewService.changeStatusOfReview(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(review);
     }
 
 
