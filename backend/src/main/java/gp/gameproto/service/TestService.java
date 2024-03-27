@@ -145,4 +145,13 @@ public class TestService {
         test.delete();
         return "삭제가 완료되었습니다.";
     }
+
+    // 찜 Top10 개 프로젝트 가져오기
+    @Transactional(readOnly = true)
+    public List<Test> findTop10Games(){
+        List<Test> tests = testRepository.findTop10Games()
+                .orElseThrow(()-> new IllegalArgumentException("not found top10 games"));
+
+        return tests;
+    }
 }

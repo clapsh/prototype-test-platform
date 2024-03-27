@@ -1,18 +1,13 @@
 package gp.gameproto.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import gp.gameproto.global.converter.StringListConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.*;
-import gp.gameproto.db.entity.Category;
-import gp.gameproto.db.entity.Gender;
-import gp.gameproto.db.entity.Follow;
-import gp.gameproto.db.entity.Review;
-import gp.gameproto.db.entity.Test;
-import gp.gameproto.db.entity.UserTest;
+
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,20 +51,30 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     private LocalDateTime modifiedAt;
 
     // 이렇게 관리하는 게 맞나..?
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category favCategory1;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category favCategory2;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category favCategory3;
 
     private String status;
 
+    //@Convert(converter = StringListConverter.class)
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> followerList;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> followingList;
+
     // 연관관계 매핑
-    @OneToMany(mappedBy = "user")//유저을 삭제하면 그에 달린 팔로워들도 모두 삭제되도록 cascade = CascadeType.REMOVE를 사용했다
-    private List<Follow> followList; //팔로우 목록
+    //@OneToMany(mappedBy = "user")//유저을 삭제하면 그에 달린 팔로워들도 모두 삭제되도록 cascade = CascadeType.REMOVE를 사용했다
+    //private List<Follow> followList; //팔로우 목록
 
     /*
     @OneToMany(mappedBy = "user")
@@ -78,6 +83,20 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     //@JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Test> tests;
+
+    /*
+    * 정리하자면 A(followr)가 B(following)를 팔로우할 때,
+
+            A의 팔로잉 리스트 -> B 추가
+            B의 팔로워 리스트 -> A 추가
+       이므로 mappedBy와 객체 차이 발생
+    * */
+    //@OneToMany(mappedBy = "following")
+    //private List<Follow> followerList;
+
+    //@OneToMany(mappedBy = "follower")
+    //private List<Follow> followingList;
+
 
     // 객체 생성자
     @Builder
@@ -169,5 +188,29 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
         this.tests.add(test);
     }
 
+    // following 추가
+    public void addFollowing(String followingEmail){
+        this.followingList.add(followingEmail);
+        System.out.println("팔로잉 추가:");
+        System.out.println(this.followingList);
+    }
+
+    // following 삭제
+    public void deleteFollowing(String followingEmail){
+        this.followingList.remove(followingEmail);
+    }
+
+    // follower 추가
+    public void addFollower(String followerEmail){
+        this.followerList.add(followerEmail);
+        System.out.println("팔로워 추가:");
+        System.out.println(this.followerList);
+    }
+
+    // follower 삭제
+    public void deleteFollower(String followerEmail){
+        this.followerList.remove(followerEmail);
+
+    }
 
 }

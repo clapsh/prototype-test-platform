@@ -135,5 +135,22 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
         return tests;
     }
 
+    public Optional<List<Test>> findTop10Games(){
+        Optional<List<Test>> tests = null;
+        try{
+            tests = Optional.ofNullable(em.createQuery(
+                            "select t from Test t"
+                                    +" where t.deleted = 'N'"
+                                    +" group by t.game.name, t"
+                                    +" order by t.dibsCnt desc"
+                            , Test.class)
+                    .setMaxResults(10)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            tests = Optional.empty();
+        }
+        return tests;
+    }
 
 }

@@ -43,6 +43,13 @@ public class UserRepository {
         return user;
     }
 
+    public User findByUserEmail(String email){
+        User user = (em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult());
+        return user;
+    }
+
     public Optional<User> findById(Long id){
         Optional<User> user = null;
         try{

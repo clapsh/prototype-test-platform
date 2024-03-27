@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class GetExistingTestRequest {
+public class GetExistingTestResponse {
     private Integer round;
     private String gameName;
     private String description;
@@ -22,7 +22,7 @@ public class GetExistingTestRequest {
     private String imgPath;
     private Category category;
 
-    public GetExistingTestRequest(Test test){
+    public GetExistingTestResponse(Test test){
         this.round = test.getRound();
         this.gameName = test.getGame().getName();
         this.description = test.getDescription();

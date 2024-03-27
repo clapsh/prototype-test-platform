@@ -1,14 +1,19 @@
 package gp.gameproto.service;
 
+import gp.gameproto.db.entity.Test;
 import gp.gameproto.db.entity.User;
 import gp.gameproto.db.repository.UserRepository;
 import gp.gameproto.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -40,15 +45,19 @@ public class UserService {
     }
 
     @Transactional(readOnly=true)
-    public String login(UserLoginRequest dto){
-        Optional<User> user = userRepository.findByEmail(dto.getEmail());
+    public User login(UserLoginRequest dto){
+        /*Optional<User> user = userRepository.findByEmail(dto.getEmail());
         if (user.isEmpty()){
-            return "해당 유저를 찾지 못했습니다.";
+            new IllegalArgumentException("not found: "+dto.getEmail());
+            //return "해당 유저를 찾지 못했습니다.";
+        }*/
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+dto.getEmail()));
+        if (!bCryptPasswordEncoder.matches(dto.getPw(), user.getPassword())){
+            new BadCredentialsException("not match password!");
         }
-        if (bCryptPasswordEncoder.matches(dto.getPw(), user.get().getPassword())){
-            return "로그인 성공!";
-        }
-        return "비밀번호가 일치하지 않습니다.";
+        return user;
+        //return "비밀번호가 일치하지 않습니다.";
     }
 
     @Transactional(readOnly=true)
@@ -94,6 +103,78 @@ public class UserService {
 
         user.updateName(request.getName());
         return user;
+    }
+
+    // 팔로우
+    @Transactional
+    public String follow(UpdateFollowRequest request){
+        String followerEmail = request.getFollowerEmail();
+        String followingEmail = request.getFollowingEmail();
+        if(followingEmail == followerEmail){
+            return "팔로우할 수 없습니다.";
+        }
+
+        User follower = userRepository.findByEmail(followerEmail)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ followerEmail));
+
+        User following = userRepository.findByEmail(followingEmail)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ followingEmail));
+
+        // 이미 팔로우가 되어있는 경우
+        if(follower.getFollowingList().contains(followingEmail) && following.getFollowerList().contains(followerEmail)) {
+            return "이미 팔로우되어 있습니다.";
+        }else if (follower.getFollowingList().contains(followingEmail) && !following.getFollowerList().contains(followerEmail)){
+            return "[무결성 에러] 팔로잉 에러";
+        }else if (!follower.getFollowingList().contains(followingEmail) && following.getFollowerList().contains(followerEmail)){
+            return "[무결성 에러] 팔로워 에러";
+        }
+
+        follower.addFollowing(followingEmail);
+        following.addFollower(followerEmail);
+
+        return "팔로우가 성공하였습니다.";
+
+    }
+
+    @Transactional
+    public String unfollow(UpdateFollowRequest request){
+        String followerEmail = request.getFollowerEmail();
+        String followingEmail = request.getFollowingEmail();
+
+        User follower = userRepository.findByEmail(followerEmail)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ followerEmail));
+
+        User following = userRepository.findByEmail(followingEmail)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ followingEmail));
+
+        // 팔로우가 되어있지 않은 경우
+        if(!follower.getFollowingList().contains(followingEmail) && !following.getFollowerList().contains(followerEmail)) {
+            return "팔로우되어 있지 않습니다.";
+        }else if (follower.getFollowingList().contains(followingEmail) && !following.getFollowerList().contains(followerEmail)){
+            return "[무결성 에러] 팔로잉 에러";
+        }else if (!follower.getFollowingList().contains(followingEmail) && following.getFollowerList().contains(followerEmail)){
+            return "[무결성 에러] 팔로워 에러";
+        }
+
+        follower.deleteFollowing(followingEmail);
+        following.deleteFollower(followerEmail);
+
+        return "언팔로우가 성공하였습니다.";
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findFollowListByEmail(String followerEmail){
+        // 사용자 존재하는지 확인
+        Optional<User> byEmail = userRepository.findByEmail(followerEmail);
+        User user = byEmail.orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<User> followingList = new ArrayList<>();
+        for(String followingEmail: user.getFollowingList()){
+            User following = userRepository.findByUserEmail(followingEmail);
+            followingList.add(following);
+        }
+        return followingList;
     }
 }
 

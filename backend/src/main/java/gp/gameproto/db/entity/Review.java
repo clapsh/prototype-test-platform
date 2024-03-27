@@ -38,13 +38,13 @@ public class Review {
     private String status;
 
     // 연관관계 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 연관관계 연결을 위한 column
     private User user; // 연관관계 주인
 
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id")
     private Test test;
 
@@ -78,6 +78,12 @@ public class Review {
     // 리뷰 삭제
     public void delete(){
         this.deleted = 'Y';
+    }
+
+    // 리뷰 반영 상태 변경
+    public Review updateStatus(String status){
+        this.status = status;
+        return this;
     }
 
 }

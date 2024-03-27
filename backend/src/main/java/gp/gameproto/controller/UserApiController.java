@@ -5,6 +5,7 @@ import gp.gameproto.dto.*;
 import gp.gameproto.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -36,19 +38,19 @@ public class UserApiController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest request){
-        String loginResult = userService.login(request);
+    public ResponseEntity<LoginUserResponse> login(@RequestBody UserLoginRequest request){
+        User loginResult = userService.login(request);
 
         HttpStatus httpstatus = HttpStatus.OK;
-        if (loginResult == "해당 유저를 찾지 못했습니다."){
+        /*if (loginResult == "해당 유저를 찾지 못했습니다."){
             httpstatus = HttpStatus.UNAUTHORIZED;
         }
         else if (loginResult == "비밀번호가 일치하지 않습니다."){
             httpstatus = HttpStatus.UNAUTHORIZED;
-        }
+        }*/
 
         return ResponseEntity.status(httpstatus)
-                .body(loginResult);
+                .body(new LoginUserResponse(loginResult));
     }
 
     // 로그아웃
@@ -103,4 +105,27 @@ public class UserApiController {
                 .body(user);
     }
 
+    // 팔로우
+    @PostMapping("/follow")
+    public ResponseEntity<String> followUser(@RequestBody UpdateFollowRequest request){
+        String message = userService.follow(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(message);
+    }
+
+    // 언팔로우
+    @PostMapping("/unfollow")
+    public ResponseEntity<String> unfollowUser(@RequestBody UpdateFollowRequest request){
+        String message = userService.unfollow(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(message);
+    }
+
+    //팔로잉 리스트 가져오기
+    @GetMapping("/following/list")
+    public ResponseEntity<GetFollowingResponse> getFollowingList(@RequestParam("email")String email){
+        List<User> followings = userService.findFollowListByEmail(email);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetFollowingResponse(followings));
+    }
 }

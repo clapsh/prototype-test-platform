@@ -1,9 +1,10 @@
 package gp.gameproto.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import gp.gameproto.db.entity.User;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -12,24 +13,25 @@ import lombok.NoArgsConstructor;
 @Table(name = "Follow")
 public class Follow {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "follow_id", updatable = false)
-    private Long id; // follower(fromUser)+followee(toUSer) 로 관리
-
-    @Column(nullable = false)
-    private Long fromUserId;
-
-    @Column(nullable = false)
-    private Long toUserId;
-
-    // 생성자
-    public Follow(Long fromUserId, Long toUserId){
-        this.fromUserId = fromUserId;
-        this.toUserId = toUserId;
-    }
+    private Long id;
 
     //연관관계 매핑
-    @ManyToOne
-    @JoinColumn(name = "user_id") // 연관관계 연결을 위한 column
-    private User user; // 연관관계 주인
+  /*  @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "follower_id") // 연관관계 연결을 위한 column
+    private User follower;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "following_id")
+    private User following;
+
+    @Builder
+    // 생성자
+    public Follow(User follower, User following){
+        this.follower = follower;
+        this.following = following;
+    }*/
 }

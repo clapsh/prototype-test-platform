@@ -53,8 +53,10 @@ public class Test {
 
     private String status;
 
-    // 연관관계 매핑
+    private Integer dibsCnt;
 
+    // 연관관계 매핑
+    @JsonIgnore
     @OneToMany(mappedBy = "test")
     private List<Dibs> dibsList;
 
@@ -63,14 +65,14 @@ public class Test {
     private List<Review> reviewList;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(mappedBy = "test")
     private ReviewSummary reviewSummary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private Game game;
 
@@ -90,6 +92,7 @@ public class Test {
         this.deleted = deleted;
         this.imgPath = imgPath;
         this.status = status;
+        this.dibsCnt = 0;
     }
 
     // User와 연관관계 매핑
@@ -112,7 +115,6 @@ public class Test {
         this.recruitedTotal = request.getRecruitedTotal();
         this.downloadLink = request.getDownloadLink();
         this.imgPath = request.getImgPath();
-
         return this;
     }
 
@@ -121,6 +123,20 @@ public class Test {
         this.reviewList.add(review);
     }
 
+    // dibs list에 추가하는 메서드
+    public void addDibs(Dibs dibs){
+        this.dibsList.add(dibs);
+        this.dibsCnt = this.dibsList.size();
+    }
+
+    // dibs list에 삭제하는 메서드
+    public boolean deleteDibs(Dibs dibs){
+        if(this.dibsList.remove(dibs)){
+            this.dibsCnt = this.dibsList.size();
+            return true;
+        }
+        return false;
+    }
     // test 삭제
     public void delete(){
         this.deleted = 'Y';

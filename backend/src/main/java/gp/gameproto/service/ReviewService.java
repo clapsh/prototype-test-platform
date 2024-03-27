@@ -6,10 +6,7 @@ import gp.gameproto.db.repository.ReviewRepository;
 import gp.gameproto.db.entity.Review;
 import gp.gameproto.db.repository.TestRepository;
 import gp.gameproto.db.repository.UserRepository;
-import gp.gameproto.dto.AddReviewRequest;
-import gp.gameproto.dto.ReviewResponse;
-import gp.gameproto.dto.UpdateReviewRequest;
-import gp.gameproto.dto.UpdateTestRequest;
+import gp.gameproto.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -88,12 +85,43 @@ public class ReviewService {
                 .orElseThrow(()-> new IllegalArgumentException("not found: "+ reviewId));
 
         // 리뷰 삭제 권한이 없는 경우
-        if (review.getUser().getEmail() != email){ // 예외처리??
+        if (review.getUser().getEmail() != email){
             new UsernameNotFoundException("삭제 권한이 없습니다.");
         }
 
         // 리뷰 삭제
         review.delete();
         return "삭제가 완료되었습니다.";
+    }
+
+    // 리뷰 개선 반영 여부
+    @Transactional(readOnly = true)
+    public String isReflected(Long reviewId){
+        // 리뷰 찾기
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ reviewId));
+
+        return review.getStatus();
+    }
+
+    // 리뷰 개선 여부 변경
+    @Transactional
+    public Review changeStatusOfReview(Long reviewId, UpdateReviewStatusRequest request){
+        String email = request.getTestUserEmail();
+        // 사용자 존재하는지 확인
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        User user = byEmail.orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 리뷰 찾기
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ reviewId));
+
+        // 리뷰 삭제 권한이 없는 경우
+        if (review.getTest().getUser().getEmail() != email){
+            new UsernameNotFoundException("리뷰 개선 여부 수정 권한이 없습니다.");
+        }
+
+        review.updateStatus(request.getReviewReflected());
+        return review;
     }
 }
