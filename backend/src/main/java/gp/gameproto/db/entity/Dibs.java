@@ -26,11 +26,11 @@ public class Dibs {
     private String status;*/
 
     // 연관관계 매핑
-    @ManyToOne(fetch = FetchType.LAZY) // 성능 최적화를 위함.
+    @ManyToOne//(fetch = FetchType.LAZY) // 성능 최적화를 위함.
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id")
     private Test test;
 

@@ -90,28 +90,28 @@ public class UserApiController {
 
     // 유저 정보 수정
     @PutMapping("/user/info/{userid}")
-    public ResponseEntity<User> updateUserInfo(@PathVariable("userid") Long id, @RequestBody UpdateUserRequest request){
+    public ResponseEntity<Long> updateUserInfo(@PathVariable("userid") Long id, @RequestBody UpdateUserRequest request){
         // 실패 처리
         User user = userService.updateInfo(id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(user);
+                .body(user.getId());
     }
 
     // 유저 소개글 수정
     @PutMapping("/user/bio/{userid}")
-    public ResponseEntity<User> updateUserBio(@PathVariable("userid") Long id, @RequestBody UpdateUserBioRequest request){
+    public ResponseEntity<Long> updateUserBio(@PathVariable("userid") Long id, @RequestBody UpdateUserBioRequest request){
         User user = userService.updateBio(id, request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(user);
+                .body(user.getId());
     }
 
     // 유저 닉네임 수정
     @PutMapping("/user/name/{userid}")
-    public ResponseEntity<User> updateUserName(@PathVariable("userid") Long id, @RequestBody UpdateUserNameRequest request){
+    public ResponseEntity<Long> updateUserName(@PathVariable("userid") Long id, @RequestBody UpdateUserNameRequest request){
         User user = userService.updateName(id, request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(user);
+                .body(user.getId());
     }
 
     // 팔로우

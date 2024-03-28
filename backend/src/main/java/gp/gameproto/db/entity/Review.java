@@ -38,13 +38,13 @@ public class Review {
     private String status;
 
     // 연관관계 매핑
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 연관관계 연결을 위한 column
     private User user; // 연관관계 주인
 
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_id")
     private Test test;
 
