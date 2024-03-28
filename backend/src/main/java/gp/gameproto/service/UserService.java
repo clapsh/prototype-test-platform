@@ -2,6 +2,7 @@ package gp.gameproto.service;
 
 import gp.gameproto.db.entity.Test;
 import gp.gameproto.db.entity.User;
+import gp.gameproto.db.repository.ReviewRepository;
 import gp.gameproto.db.repository.UserRepository;
 import gp.gameproto.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
@@ -42,6 +44,14 @@ public class UserService {
                 .favCategory3(dto.getFavCategory3())
                 .build());
         return "회원가입 성공";
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean isDuplicated(String email){
+        if (userRepository.findByEmail(email).isPresent()){
+            return false;
+        }
+        return true;
     }
 
     @Transactional(readOnly=true)
@@ -175,6 +185,17 @@ public class UserService {
             followingList.add(following);
         }
         return followingList;
+    }
+
+    //리뷰 수, 게임 수, 팔로워 수 불러오기
+    @Transactional(readOnly = true)
+    public MyPageCount findCountsOfUserByEmail(String email){
+        // 사용자 존재하는지 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        Long reviewCnt = reviewRepository.findCntByUserEmail(email);
+        return new MyPageCount(user, reviewCnt);
     }
 }
 

@@ -58,7 +58,6 @@ public class UserRepository {
             System.out.println("### ERROR:"+e+"###");
             user = Optional.empty();
         }
-        System.out.println("++++"+user);
         return user;
     }
 
@@ -66,4 +65,26 @@ public class UserRepository {
         return em.createQuery("select u from User u")
                 .getResultList();
     }
+
+   /* public Integer findReviewCounts(String email){
+        Optional<User> user = null;
+        try {
+            user = Optional.ofNullable(em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult());
+        }catch (NoResultException e) {
+            System.out.println("### ERROR:"+e+"###");
+            user = Optional.empty();
+        }
+
+        if(user.isPresent()){
+            Integer reviewCnt = em.createQuery(
+                    "SELECT COUNT(r.id) "
+                    +" FROM "
+
+            )
+        }
+        return 0;
+    }*/
+
 }

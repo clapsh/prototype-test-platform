@@ -154,4 +154,13 @@ public class TestService {
 
         return tests;
     }
+
+    // (게시자) 게임의 모든 리뷰 회차 알려주기
+    @Transactional(readOnly = true)
+    public List<Integer> findTestRoundsOfGame(Long gameId){
+        List<Integer> rounds = testRepository.findGameTestRounds(gameId)
+                .orElseThrow(()-> new IllegalArgumentException("not found"+gameId));
+
+        return rounds;
+    }
 }

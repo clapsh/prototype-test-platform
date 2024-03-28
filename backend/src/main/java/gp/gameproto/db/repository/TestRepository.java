@@ -153,4 +153,22 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
         return tests;
     }
 
+    // 같은 게임의 모든 회차
+    public Optional<List<Integer>> findGameTestRounds (Long gameId){
+        Optional<List<Integer>> gameTestRounds = null;
+        try{
+            gameTestRounds = Optional.ofNullable(em.createQuery(
+                            "select t.round from Test t"
+                                    +" where t.game.id = :gameId"
+                                    +" and t.deleted = 'N'"
+                                    +" order by t.createdAt desc"
+                            , Integer.class)
+                    .setParameter("gameId", gameId)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            gameTestRounds = Optional.empty();
+        }
+        return gameTestRounds;
+    }
 }

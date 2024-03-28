@@ -122,4 +122,13 @@ public class TestApiController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetTop10Response(tests));
     }
+
+    // (게시자) 게임의 모든 리뷰 회차 알려주기
+    @GetMapping("/review/round/{gameId}")
+    public ResponseEntity<GetAllRoundsResponse> getRoundsOfGame (@PathVariable("gameId")Long gameId){
+        List<Integer> roundList = testService.findTestRoundsOfGame(gameId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetAllRoundsResponse(roundList));
+    }
 }
