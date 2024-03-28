@@ -71,4 +71,80 @@ public class ReviewRepository {
         }
         return reviews;
     }
+
+    public Optional<List<Review>> findByGameIdAll (Long gameId){
+        Optional<List<Review>> reviews = null;
+        try{
+            reviews = Optional.ofNullable(em.createQuery(
+                            "select r from Review r"
+                                    +" where r.test.game.id = :gameId"
+                                    +" and r.deleted = 'N'"
+                                    +" order by r.createdAt desc"
+                            , Review.class)
+                    .setParameter("gameId", gameId)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            reviews = Optional.empty();
+        }
+        return reviews;
+    }
+    public Optional<List<Review>> findByGameIdRound(Long gameId, Integer round){
+        Optional<List<Review>> reviews = null;
+        try{
+            reviews = Optional.ofNullable(em.createQuery(
+                            "select r from Review r"
+                                    +" where r.test.game.id = :gameId"
+                                    +" and r.test.round = :round"
+                                    +" and r.deleted = 'N'"
+                                    +" order by r.createdAt desc"
+                            , Review.class)
+                    .setParameter("gameId", gameId)
+                    .setParameter("round", round)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            reviews = Optional.empty();
+        }
+        return reviews;
+    }
+
+    public Long findCntByUserEmail(String email) {
+        Long reviewCnt;
+        try{
+            reviewCnt = (em.createQuery(
+                            "select count(r) from Review r"
+                                    +" where r.user.email = :email"
+                                    +" and r.deleted = 'N'"
+                            , Long.class)
+                    .setParameter("email", email)
+                    .getSingleResult());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            reviewCnt = 0L;
+        }
+        return reviewCnt;
+    }
+
+    public Optional<List<Review>> findReviewByKeyword(Long gameId, String keyword, Integer testRound){
+        Optional<List<Review>> reviews = null;
+        try{
+            reviews = Optional.ofNullable(em.createQuery(
+                            "select r from Review r"
+                                    +" where r.test.game.id = :gameId"
+                                    +" and r.test.round = :round"
+                                    +" and r.text like concat('%', :keyword, '%')"
+                                    +" and r.deleted = 'N'"
+                                    +" order by r.createdAt desc"
+                            , Review.class)
+                    .setParameter("gameId", gameId)
+                    .setParameter("keyword", keyword)
+                    .setParameter("round", testRound)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            reviews = Optional.empty();
+        }
+        return reviews;
+    }
 }

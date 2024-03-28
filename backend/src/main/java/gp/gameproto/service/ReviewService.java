@@ -1,5 +1,4 @@
 package gp.gameproto.service;
-import gp.gameproto.db.entity.Game;
 import gp.gameproto.db.entity.Test;
 import gp.gameproto.db.entity.User;
 import gp.gameproto.db.repository.ReviewRepository;
@@ -123,5 +122,31 @@ public class ReviewService {
 
         review.updateStatus(request.getReviewReflected());
         return review;
+    }
+
+
+    //(게시자) 회차별 리뷰 불러오기
+    @Transactional(readOnly = true)
+    public List<Review> findRoundReviews(RoundReviewRequest request){
+        List<Review> reviews;
+        if(request.isAll()){
+            reviews = reviewRepository.findByGameIdAll(request.getGameId())
+                    .orElseThrow(()-> new IllegalArgumentException("not found"+request.getGameId()));
+        }else{
+            reviews = reviewRepository.findByGameIdRound(request.getGameId(), request.getRound())
+                    .orElseThrow(()-> new IllegalArgumentException("not found"+request.getGameId()));
+        }
+        return reviews;
+    }
+
+
+    // 리뷰 키워드 검색
+    @Transactional(readOnly = true)
+    public List<Review> findReviewByKeyword(Long gameId, String keyword, Integer testRound){
+        // 리뷰 찾기
+        List<Review> reviews = reviewRepository.findReviewByKeyword(gameId, keyword, testRound)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ keyword));
+
+        return reviews;
     }
 }

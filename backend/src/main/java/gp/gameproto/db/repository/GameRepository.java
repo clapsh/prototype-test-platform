@@ -7,6 +7,7 @@ import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -41,6 +42,5 @@ public class GameRepository {
 
     //아이디로 조회
     public Optional<Game> findById (Long id){return Optional.ofNullable(em.find(Game.class,id));}
-
 
 }

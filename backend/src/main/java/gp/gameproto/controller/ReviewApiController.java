@@ -83,4 +83,24 @@ public class ReviewApiController {
     }
 
 
+    // (게시자) 회차별 리뷰 불러오기
+    @GetMapping("/round")
+    public ResponseEntity<GetRoundReviewResponse> findRoundReviews(@RequestBody RoundReviewRequest request){
+        List<Review> reviews = reviewService.findRoundReviews(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetRoundReviewResponse(reviews));
+    }
+
+    // 리뷰 키워드 검색
+    @GetMapping("/search")
+    public ResponseEntity<GetReviewSearchResponse> findReviewsByKeyword(@RequestParam("gameId")Long gameId,
+                                                                        @RequestParam("keyword")String keyword,
+                                                                        @RequestParam("testRound")Integer testRound){
+        List<Review> reviews = reviewService.findReviewByKeyword(gameId, keyword, testRound);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetReviewSearchResponse(reviews));
+    }
+
 }

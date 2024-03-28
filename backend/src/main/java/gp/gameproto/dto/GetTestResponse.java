@@ -20,6 +20,7 @@ public class GetTestResponse {
     private String imgPath;
     private String gameName;
     private Category category;
+    private Long userId;
     public GetTestResponse(Test test){
         this.round = test.getRound();
         this.description = test.getDescription();
@@ -33,5 +34,6 @@ public class GetTestResponse {
         this.imgPath = test.getImgPath();
         this.gameName = test.getGame().getName();
         this.category = test.getGame().getCategory();
+        this.userId = test.getUser().getId();
     }
 }

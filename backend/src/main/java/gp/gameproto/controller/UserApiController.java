@@ -36,6 +36,15 @@ public class UserApiController {
                 .body(savedResult);
     }
 
+    // 이메일 중복체크
+    @GetMapping("/email/check")
+    public ResponseEntity<Boolean> isDuplicatedUser(@RequestParam("email")String email){
+        Boolean isNotDup = userService.isDuplicated(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(isNotDup);
+    }
+
     //로그인
     @PostMapping("/login")
     public ResponseEntity<LoginUserResponse> login(@RequestBody UserLoginRequest request){
@@ -127,5 +136,14 @@ public class UserApiController {
         List<User> followings = userService.findFollowListByEmail(email);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetFollowingResponse(followings));
+    }
+
+    //리뷰 수, 게임 수, 팔로워 수 불러오기
+    @GetMapping("/user/cnt")
+    public ResponseEntity<GetUserMyPageCount> getCountsOfUser (@RequestParam("email")String email){
+        MyPageCount pageCount = userService.findCountsOfUserByEmail(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetUserMyPageCount(pageCount));
     }
 }
