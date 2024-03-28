@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,12 +39,12 @@ public class TestApiController {
 
     // 프로젝트 수정
     @PutMapping("/{testId}")
-    public ResponseEntity<Test> updateTest (@PathVariable("testId") Long id, @RequestParam("email") String email, @RequestBody UpdateTestRequest request){
+    public ResponseEntity<Long> updateTest (@PathVariable("testId") Long id, @RequestParam("email") String email, @RequestBody UpdateTestRequest request){
         Test test = testService.update(request, email, id);
 
         // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
-                .body(test);
+                .body(test.getId());
     }
 
 
@@ -127,7 +128,7 @@ public class TestApiController {
     @GetMapping("/review/round/{gameId}")
     public ResponseEntity<GetAllRoundsResponse> getRoundsOfGame (@PathVariable("gameId")Long gameId){
         List<Integer> roundList = testService.findTestRoundsOfGame(gameId);
-
+        roundList = roundList.stream().distinct().collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetAllRoundsResponse(roundList));
     }

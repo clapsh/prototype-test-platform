@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import gp.gameproto.db.entity.Review;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,12 +47,12 @@ public class ReviewApiController {
 
     // 리뷰 수정
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Review> updateReview(@PathVariable("reviewId") Long reviewId, @RequestParam(value = "email") String email
+    public ResponseEntity<Long> updateReview(@PathVariable("reviewId") Long reviewId, @RequestParam(value = "email") String email
             , @RequestBody UpdateReviewRequest request){
         Review updatedReview = reviewService.update(request, email, reviewId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(updatedReview);
+                .body(updatedReview.getId());
     }
 
     //리뷰 삭제
@@ -75,11 +76,11 @@ public class ReviewApiController {
 
     // 리뷰 개선 여부 변경
     @PutMapping("/reflected/{reviewId}")
-    public ResponseEntity<Review> changeStatusOfReview(@PathVariable("reviewId")Long id, @RequestBody UpdateReviewStatusRequest request){
+    public ResponseEntity<Long> changeStatusOfReview(@PathVariable("reviewId")Long id, @RequestBody UpdateReviewStatusRequest request){
         Review review = reviewService.changeStatusOfReview(id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(review);
+                .body(review.getId());
     }
 
 

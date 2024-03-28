@@ -66,10 +66,10 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     private String status;
 
     //@Convert(converter = StringListConverter.class)
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection//(fetch = FetchType.LAZY)
     private List<String> followerList;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection//(fetch = FetchType.LAZY)
     private List<String> followingList;
 
     // 연관관계 매핑

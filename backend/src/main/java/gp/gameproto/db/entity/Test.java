@@ -65,14 +65,14 @@ public class Test {
     private List<Review> reviewList;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(mappedBy = "test")
     private ReviewSummary reviewSummary;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private Game game;
 
