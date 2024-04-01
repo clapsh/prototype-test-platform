@@ -20,19 +20,11 @@ package gp.gameproto.db.entity;
  */
 public enum Category {
     ACTION,
-    SHOOTING,
-    ARCADE_RHYTHM,
-    FIGHTING_MARTIAL_ARTS,
     ADVENTURE,
-    VISUAL_NOVEL,
-    PUZZLE,
-    ROGUE_LIKE,
+    CASUAL,
     ROLE_PLAYING,
     SIMULATION,
-    FARMING_CRAFTING,
-    DATING,
-    TURN_BASED_STRATEGY,
     STRATEGY,
-    REAL_TIME_STRATEGY,
-    SPORTS_RACING,
+    SPORTS,
+    RACING,
 }

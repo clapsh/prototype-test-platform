@@ -22,7 +22,7 @@ public class GameCategory {
     private Category category;
 
     // 연관관계 매핑
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)`
     @JoinColumn(name = "game_id")
     private Game game;
 

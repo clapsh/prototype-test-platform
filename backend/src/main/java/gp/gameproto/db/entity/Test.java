@@ -24,6 +24,7 @@ public class Test {
     @Column(nullable = false)
     private Integer round;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(nullable = false)

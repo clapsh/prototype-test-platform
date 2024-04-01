@@ -109,6 +109,7 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
                             , Test.class)
                             .setParameter("now", LocalDateTime.now())
                             .setParameter("category", category)
+                            .setMaxResults(12)
                             .getResultList());
         }catch (NoResultException e){
             System.out.println("### ERROR:"+e+"###");
