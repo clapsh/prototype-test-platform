@@ -2,8 +2,6 @@ package gp.gameproto.dto;
 
 import gp.gameproto.db.entity.Category;
 import gp.gameproto.db.entity.Gender;
-import gp.gameproto.db.entity.User;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

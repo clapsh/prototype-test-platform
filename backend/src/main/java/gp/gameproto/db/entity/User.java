@@ -72,6 +72,8 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     @ElementCollection//(fetch = FetchType.LAZY)
     private List<String> followingList;
 
+    private List<Long> playedTestList;
+
     // 연관관계 매핑
     //@OneToMany(mappedBy = "user")//유저을 삭제하면 그에 달린 팔로워들도 모두 삭제되도록 cascade = CascadeType.REMOVE를 사용했다
     //private List<Follow> followList; //팔로우 목록
@@ -114,6 +116,7 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
         this.favCategory1 = favCategory1;
         this.favCategory2 = favCategory2;
         this.favCategory3 = favCategory3;
+        this.playedTestList = new ArrayList<>();
     }
 
 
@@ -191,8 +194,6 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     // following 추가
     public void addFollowing(String followingEmail){
         this.followingList.add(followingEmail);
-        System.out.println("팔로잉 추가:");
-        System.out.println(this.followingList);
     }
 
     // following 삭제
@@ -203,14 +204,16 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     // follower 추가
     public void addFollower(String followerEmail){
         this.followerList.add(followerEmail);
-        System.out.println("팔로워 추가:");
-        System.out.println(this.followerList);
     }
 
     // follower 삭제
     public void deleteFollower(String followerEmail){
         this.followerList.remove(followerEmail);
+    }
 
+    // 참여한 테스트 추가
+    public void addPlayedTest(Long testId){
+        this.playedTestList.add(testId);
     }
 
 }

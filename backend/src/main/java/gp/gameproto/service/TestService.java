@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -155,6 +156,7 @@ public class TestService {
         return tests;
     }
 
+
     // (게시자) 게임의 모든 리뷰 회차 알려주기
     @Transactional(readOnly = true)
     public List<Integer> findTestRoundsOfGame(Long gameId){
@@ -163,4 +165,33 @@ public class TestService {
 
         return rounds;
     }
+
+
+    // 테스트 참여 상태로 업데이트
+    @Transactional
+    public String updateEngageState(Long testId, String email){
+        // 사용자 존재하는지 확인
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        User user = byEmail.orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 테스트 찾기
+        Test test = testRepository.findById(testId)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ testId));
+
+        // 테스트 모집이 끝난경우
+        if (test.getEndDate().compareTo(LocalDateTime.now()) < 0){
+            return "테스트 모집기간이 끝났습니다.";
+        }else if (test.getRecruitedTotal() <= test.getUsersCnt()){// 테스트 모집 인원이 마감된 경우
+            return "모집이 마감되었습니다.";
+        }else if (user.getPlayedTestList().contains(testId)){ // 이미 참여한 경우
+            return "이미 참여하였습니다.";
+        }
+
+        // 참여 상태 업데이트
+        user.addPlayedTest(test.getId());
+        test.updateUsersCnt();
+
+        return "테스트 참여 완료";
+    }
+
 }

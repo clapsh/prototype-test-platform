@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import gp.gameproto.db.entity.Category;
-import gp.gameproto.db.entity.Test;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -18,6 +16,7 @@ public class GameCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(nullable = false)
     private Category category;
 
@@ -28,9 +27,10 @@ public class GameCategory {
 
     // 생성자
     @Builder
-    public GameCategory(Category category){
+    public GameCategory(Category category, Game game){
         this.category = category;
+        this.game = game;
     }
 
-    public void mappingGame(Game game) {this.game = game;}
+    //public void mappingGame(Game game) {this.game = game;}
 }

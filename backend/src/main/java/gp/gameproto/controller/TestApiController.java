@@ -4,6 +4,7 @@ import gp.gameproto.db.entity.Category;
 import gp.gameproto.db.entity.Test;
 import gp.gameproto.dto.*;
 import gp.gameproto.service.TestService;
+import gp.gameproto.service.api.RecommendGameApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/proto")
 public class TestApiController {
     private final TestService testService;
+    private final RecommendGameApiClient recentPlayedGameApiClient;
 
     // 프로젝트 등록
     @PostMapping("/{gameId}")
@@ -90,7 +92,7 @@ public class TestApiController {
 
     // (공통) 카테고리 별 게임(테스트) 불러오기
     @GetMapping("main/games/{category}")
-    public ResponseEntity<GetCategorizedTestsResponse> findCategorizedTests (@PathVariable("category")Category category){
+    public ResponseEntity<GetCategorizedTestsResponse> findCategorizedTests (@PathVariable("category") Category category){
         List<Test> tests = testService.findCategorizedTests(category);
         // tests가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
@@ -131,5 +133,24 @@ public class TestApiController {
         roundList = roundList.stream().distinct().collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetAllRoundsResponse(roundList));
+    }
+
+    // 테스트 참여하기
+    @GetMapping("/engage/{testId}")
+    public ResponseEntity<String> updateUsersCntNPlayedTestList(@PathVariable("testId")Long testId,
+                                                              @RequestParam("email")String email){
+        String message = testService.updateEngageState(testId, email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(message);
+    }
+
+    //AI 추천 게임
+    @GetMapping("/ai")
+    public ResponseEntity<GetAIRecommendResponse> getAIRecommend(@RequestParam("email")String email){
+        List<Test> aiRecommendTests = recentPlayedGameApiClient.findAIRecommendTests(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetAIRecommendResponse(aiRecommendTests));
     }
 }

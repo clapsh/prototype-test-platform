@@ -56,6 +56,8 @@ public class Test {
 
     private Integer dibsCnt;
 
+    private Integer usersCnt;
+
     // 연관관계 매핑
     @JsonIgnore
     @OneToMany(mappedBy = "test")
@@ -94,6 +96,7 @@ public class Test {
         this.imgPath = imgPath;
         this.status = status;
         this.dibsCnt = 0;
+        this.usersCnt = 0;
     }
 
     // User와 연관관계 매핑
@@ -141,5 +144,15 @@ public class Test {
     // test 삭제
     public void delete(){
         this.deleted = 'Y';
+    }
+
+    // 리뷰 요약 mapping
+    public void mappingReviewSummary(ReviewSummary summary){
+        this.reviewSummary = summary;
+    }
+
+    // 참여 인원 늘리기
+    public void updateUsersCnt(){
+        this.usersCnt += 1;
     }
 }

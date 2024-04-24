@@ -18,7 +18,7 @@ public class ReviewSummary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String summary;
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -38,4 +38,9 @@ public class ReviewSummary {
     @JoinColumn(name = "test_id")
     private Test test;
 
+
+    // Test와 연관관계 매핑
+    public void mappingTest(Test test){
+        this.test = test;
+    }
 }
