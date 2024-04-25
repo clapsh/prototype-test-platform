@@ -149,4 +149,18 @@ public class ReviewService {
 
         return reviews;
     }
+
+    // 테스트 id에 해당하는 리뷰 수집
+    @Transactional(readOnly = true)
+    public String getAllTestReviews(Long testId){
+        String content = "";
+        // 테스트 id에 해당하는 리뷰 찾기
+        List<Review> reviews = reviewRepository.findByTestId(testId)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ testId+" reviews"));
+
+        for (Review review: reviews){
+            content += review.getText();
+        }
+        return content;
+    }
 }
