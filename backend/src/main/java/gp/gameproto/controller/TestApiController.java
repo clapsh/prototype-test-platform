@@ -148,7 +148,7 @@ public class TestApiController {
     //AI 추천 게임
     @GetMapping("/ai")
     public ResponseEntity<GetAIRecommendResponse> getAIRecommend(@RequestParam("email")String email){
-        List<Test> aiRecommendTests = recentPlayedGameApiClient.findAIRecommendTests(email);
+        List<Test> aiRecommendTests = testService.findAI8Games();///recentPlayedGameApiClient.findAIRecommendTests(email);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetAIRecommendResponse(aiRecommendTests));

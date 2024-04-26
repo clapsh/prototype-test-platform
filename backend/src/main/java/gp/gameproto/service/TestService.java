@@ -155,6 +155,14 @@ public class TestService {
 
         return tests;
     }
+    //임시 AI 추천 게임 가져오기
+    @Transactional(readOnly = true)
+    public List<Test> findAI8Games(){
+        List<Test> tests = testRepository.findAI8Games()
+                .orElseThrow(()-> new IllegalArgumentException("not found top10 games"));
+
+        return tests;
+    }
 
 
     // (게시자) 게임의 모든 리뷰 회차 알려주기

@@ -154,6 +154,24 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
         return tests;
     }
 
+    // 임시
+    public Optional<List<Test>> findAI8Games(){
+        Optional<List<Test>> tests = null;
+        try{
+            tests = Optional.ofNullable(em.createQuery(
+                            "select t from Test t"
+                                    +" where t.deleted = 'N'"
+                                    +" where t.game.name = 'Medieval Dynasty' or t.game.name = '드래곤 퀘스트 XI S 지나간 시간을 찾아서 - Definitive Edition' or t.game.name = 'Forza Horizon 5' or t.game.name = 'Eternium'  or t.game.name = 'Redout: Space Assault'  or t.game.name = 'Full Metal Furies'   or t.game.name = 'Mindustry' or t.game.name = 'The Last One Month'"
+                            , Test.class)
+                    .setMaxResults(10)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            tests = Optional.empty();
+        }
+        return tests;
+    }
+
     // 같은 게임의 모든 회차
     public Optional<List<Integer>> findGameTestRounds (Long gameId){
         Optional<List<Integer>> gameTestRounds = null;
