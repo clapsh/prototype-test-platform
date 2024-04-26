@@ -18,8 +18,8 @@ import java.io.IOException;
 @Service
 public class ReviewSummaryApiClient {
     /*GITHUB에 올릴 때 시크릿변수에 저장!!!!*/
-    private final String CLIENT_ID = "oj91dxvnxp";
-    private final String CLIENT_SECRET = "HC34KIztPISzzeVlGbUCgI3GpfuqEuyrT6SZMpXt";
+    private final String CLIENT_ID = "";
+    private final String CLIENT_SECRET = "";
 
     private final String ClovaSummaryUrl = "https://naveropenapi.apigw.ntruss.com";
     private final ReviewService reviewService;
