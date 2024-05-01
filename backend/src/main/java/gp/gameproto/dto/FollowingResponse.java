@@ -9,14 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FollowingResponse {
     private String imgPath;
-    private String name;
+    private String userName;
+    private String userEmail;
     private Category category1;
     private Category category2;
     private Category category3;
 
     public FollowingResponse(User following){
         this.imgPath = following.getImgPath();
-        this.name = following.getName();
+        this.userName = following.getName();
+        this.userEmail = following.getEmail();
         this.category1 = following.getFavCategory1();
         this.category2 = following.getFavCategory2();
         this.category3 = following.getFavCategory3();

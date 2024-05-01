@@ -21,6 +21,9 @@ public class GetTestResponse {
     private String gameName;
     private Category category;
     private Long userId;
+    private String userName;
+    private String userEmail;
+    private Long gameId;
     public GetTestResponse(Test test){
         this.round = test.getRound();
         this.description = test.getDescription();
@@ -35,5 +38,8 @@ public class GetTestResponse {
         this.gameName = test.getGame().getName();
         this.category = test.getGame().getCategory();
         this.userId = test.getUser().getId();
+        this.userName = test.getUser().getName();
+        this.userEmail = test.getUser().getEmail();
+        this.gameId = test.getGame().getId();
     }
 }

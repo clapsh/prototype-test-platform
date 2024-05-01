@@ -21,6 +21,7 @@ public class GetExistingTestResponse {
     private Integer recruitedTotal;
     private String imgPath;
     private Category category;
+    private Long gameId;
 
     public GetExistingTestResponse(Test test){
         this.round = test.getRound();
@@ -32,5 +33,6 @@ public class GetExistingTestResponse {
         this.recruitedTotal = test.getRecruitedTotal();
         this.imgPath = test.getImgPath();
         this.category = test.getGame().getCategory();
+        this.gameId = test.getGame().getId();
     }
 }

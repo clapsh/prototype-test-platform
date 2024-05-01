@@ -34,7 +34,6 @@ public class TestApiController {
     @GetMapping("/{testId}")
     public ResponseEntity<GetTestResponse> findTestById (@PathVariable("testId") Long id){
         Test test = testService.findById(id);
-        // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetTestResponse(test));
     }
@@ -43,8 +42,6 @@ public class TestApiController {
     @PutMapping("/{testId}")
     public ResponseEntity<Long> updateTest (@PathVariable("testId") Long id, @RequestParam("email") String email, @RequestBody UpdateTestRequest request){
         Test test = testService.update(request, email, id);
-
-        // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(test.getId());
     }
@@ -54,7 +51,6 @@ public class TestApiController {
     @GetMapping("/download/{testId}")
     public ResponseEntity<String> findTestLinkById (@PathVariable("testId") Long id){
         Test test = testService.findById(id);
-        // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(test.getDownloadLink());
     }
@@ -64,10 +60,6 @@ public class TestApiController {
     @GetMapping("/build/{testId}")
     public ResponseEntity<GetExistingTestResponse> findExistingTestById (@PathVariable("testId") Long id){
         Test test = testService.findById(id);
-        // test가 삭제되었을 경우
-        //if (test.getDeleted() == 'Y')
-
-        // test가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetExistingTestResponse(test));
     }
@@ -76,7 +68,6 @@ public class TestApiController {
     @GetMapping("build/list")
     public ResponseEntity<GetRecentUserTestsResponse> findRecentProjects (@RequestParam("email") String email){
         List<Test> tests = testService.findTestOfRecentGames(email);
-        // tests가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetRecentUserTestsResponse(tests));
     }
@@ -85,7 +76,6 @@ public class TestApiController {
     @GetMapping("main/recent")
     public ResponseEntity<GetRecentTestsResponse> findRecentTests (){
         List<Test> tests = testService.findRecentGames();
-        // tests가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetRecentTestsResponse(tests));
     }
@@ -94,7 +84,6 @@ public class TestApiController {
     @GetMapping("main/games/{category}")
     public ResponseEntity<GetCategorizedTestsResponse> findCategorizedTests (@PathVariable("category") Category category){
         List<Test> tests = testService.findCategorizedTests(category);
-        // tests가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetCategorizedTestsResponse(tests));
     }
@@ -103,7 +92,6 @@ public class TestApiController {
     @GetMapping("/mypage/games")
     public ResponseEntity<GetUserTestsResponse> findUserTests (@RequestParam("email") String email){
         List<Test> tests = testService.findUserTestsOfGames(email);
-        // tests가 empty일 경우 예외처리
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetUserTestsResponse(tests));
     }
@@ -112,7 +100,6 @@ public class TestApiController {
     @DeleteMapping("/{testId}")
     public ResponseEntity<String> deleteTest (@PathVariable("testId") Long id, @RequestParam("email") String email){
         String message = testService.delete(email,id);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
     }
@@ -121,7 +108,6 @@ public class TestApiController {
     @GetMapping("top10")
     public ResponseEntity<GetTop10Response> getTop10Games (){
         List<Test> tests = testService.findTop10Games();
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetTop10Response(tests));
     }
@@ -140,7 +126,6 @@ public class TestApiController {
     public ResponseEntity<String> updateUsersCntNPlayedTestList(@PathVariable("testId")Long testId,
                                                               @RequestParam("email")String email){
         String message = testService.updateEngageState(testId, email);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
     }
@@ -149,8 +134,15 @@ public class TestApiController {
     @GetMapping("/ai")
     public ResponseEntity<GetAIRecommendResponse> getAIRecommend(@RequestParam("email")String email){
         List<Test> aiRecommendTests = testService.findAI8Games();///recentPlayedGameApiClient.findAIRecommendTests(email);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetAIRecommendResponse(aiRecommendTests));
+    }
+
+    // 게임 검색
+    @GetMapping("search")
+    public ResponseEntity<GetTestSearchResponse> getTestKeywordSearch(@RequestParam("keyword") String keyword){
+        List<Test> keywordTests = testService.findTestByKeyword(keyword);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetTestSearchResponse(keywordTests));
     }
 }

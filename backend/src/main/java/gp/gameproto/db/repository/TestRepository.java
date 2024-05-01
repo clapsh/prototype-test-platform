@@ -154,7 +154,7 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
         return tests;
     }
 
-    // 임시
+    // ai 임시
     public Optional<List<Test>> findAI8Games(){
         Optional<List<Test>> tests = null;
         try{
@@ -189,5 +189,28 @@ public class TestRepository {//service(여러 DAO를 호출하여 여러 데이�
             gameTestRounds = Optional.empty();
         }
         return gameTestRounds;
+    }
+
+    // 게임 이름 검색 시 테스트 반환
+    public Optional<List<Test>> findKeywordTests(String keyword){
+        Optional<List<Test>> tests = null;
+            try {
+            // 테스트 종료 일자가 오늘을 지나지 않은 것
+            tests = Optional.ofNullable(em.createQuery(
+                            "select t from Test t"
+                                    +" where t.endDate >= :now"
+                                    +" and t.game.name like concat('%', :keyword, '%')"
+                                    +" and t.deleted = 'N'"
+                                    +" order by t.createdAt desc"
+                            , Test.class)
+                    .setParameter("now", LocalDateTime.now())
+                    .setParameter("keyword", keyword)
+                    .setMaxResults(12)
+                    .getResultList());
+        }catch (NoResultException e){
+            System.out.println("### ERROR:"+e+"###");
+            tests = Optional.empty();
+        }
+            return tests;
     }
 }

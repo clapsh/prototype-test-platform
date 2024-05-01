@@ -11,6 +11,7 @@ public class RecentUserTestsResponse {
     private String gameName;
     private int round;
     private Category category;
+    private Long gameId;
 
     public RecentUserTestsResponse(Test test){
         this.testId = test.getId();
@@ -18,5 +19,6 @@ public class RecentUserTestsResponse {
         this.gameName = test.getGame().getName();
         this.round = test.getRound();
         this.category = test.getGame().getCategory();
+        this.gameId = test.getGame().getId();
     }
 }

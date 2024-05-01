@@ -11,6 +11,8 @@ public class MyDibsTestResponse {
     private Category category;
     private Integer reviewCnt;
     private String imgPath;
+    private Long testId;
+    private Long gameId;
 
     public MyDibsTestResponse(Test test){
         this.gameName = test.getGame().getName();
@@ -18,5 +20,7 @@ public class MyDibsTestResponse {
         this.category = test.getGame().getCategory();
         this.reviewCnt = test.getReviewList().size();
         this.imgPath = test.getImgPath();
+        this.testId = test.getId();
+        this.gameId = test.getGame().getId();
     }
 }

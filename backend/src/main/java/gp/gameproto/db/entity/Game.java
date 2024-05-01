@@ -47,7 +47,4 @@ public class Game {
         this.category = request.getCategory();
         return this;
     }
-
-
-
 }

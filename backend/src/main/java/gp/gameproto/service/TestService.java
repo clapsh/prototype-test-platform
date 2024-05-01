@@ -202,4 +202,11 @@ public class TestService {
         return "테스트 참여 완료";
     }
 
+    // 키워드로 테스트 찾기
+    public List<Test> findTestByKeyword(String keyword){
+        List<Test> tests = testRepository.findKeywordTests(keyword)
+                .orElseThrow(()-> new IllegalArgumentException("not found"+keyword));
+
+        return tests;
+    }
 }
