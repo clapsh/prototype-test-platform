@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AiRecommendBody {
-    private Long gameId;
-    private String description;
+    //private Long gameId;
+    private String data;
 
     @Builder
-    public AiRecommendBody(Long gameId, String description){
-        this.gameId = gameId;
-        this.description = description;
+    public AiRecommendBody(String description){
+       // this.gameId = gameId;
+        this.data = description;
     }
 }
