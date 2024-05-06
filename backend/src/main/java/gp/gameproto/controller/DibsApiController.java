@@ -50,4 +50,13 @@ public class DibsApiController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetMyDibsTestResponse(dibsList));
     }
+
+    // 찜이 되어있는지 확인
+    @GetMapping("/isDib/{testId}")
+    public ResponseEntity<Boolean> findIsDib(@PathVariable("testId")Long testId,@RequestParam("email") String email){
+        Boolean isDib = dibsService.findIsDib(testId, email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(isDib);
+    }
 }

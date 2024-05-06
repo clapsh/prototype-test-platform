@@ -85,4 +85,23 @@ public class DibsService {
         return dibsList;
     }
 
+    @Transactional(readOnly = true)
+    public Boolean findIsDib(Long testId, String email){
+        //사용자가 존재하는지 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        //test가 존재하는지 확인
+        Test test = testRepository.findById(testId)
+                .orElseThrow(()-> new IllegalArgumentException("not found "+testId));
+
+        // 좋아요가 없는 경우
+        Optional<Dibs> dibs = dibsRepository.findByUserAndTest(email, testId);
+
+        if(dibs.isEmpty())
+            return Boolean.FALSE;
+
+        return Boolean.TRUE;
+    }
+
 }

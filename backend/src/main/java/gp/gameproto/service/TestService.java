@@ -202,11 +202,43 @@ public class TestService {
         return "테스트 참여 완료";
     }
 
+    // 테스트 참여 중인지 확인
+    @Transactional(readOnly = true)
+    public Boolean findEngageState(Long testId, String email){
+        // 사용자 존재하는지 확인
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        User user = byEmail.orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 테스트 찾기
+        Test test = testRepository.findById(testId)
+                .orElseThrow(()-> new IllegalArgumentException("not found: "+ testId));
+
+        // 테스트에 참여하였는지 찾기
+        if (user.getPlayedTestList().contains(testId)){ // 이미 참여한 경우
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
+    }
+
     // 키워드로 테스트 찾기
+    @Transactional(readOnly = true)
     public List<Test> findTestByKeyword(String keyword){
         List<Test> tests = testRepository.findKeywordTests(keyword)
                 .orElseThrow(()-> new IllegalArgumentException("not found"+keyword));
 
         return tests;
+    }
+
+    // 참여한 테스트 리스트 찾기
+    @Transactional(readOnly = true)
+    public List<Long> findEngagedTestIds(String email){
+        // 사용자 존재하는지 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        List<Long> testIdList = user.getPlayedTestList();
+
+        return testIdList;
     }
 }

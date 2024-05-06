@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,16 @@ public class TestApiController {
                 .body(new GetAllRoundsResponse(roundList));
     }
 
+    // (게시자) testId로 게임의 모든 리뷰 회차 알려주기
+    @GetMapping("/round/{testId}")
+    public ResponseEntity<GetAllRoundsResponse> getAllRoundsOfGameByTestId (@PathVariable("testId")Long testId){
+        Long gameId = testService.findById(testId).getGame().getId();
+        List<Integer> roundList = testService.findTestRoundsOfGame(gameId);
+        roundList = roundList.stream().distinct().collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GetAllRoundsResponse(roundList));
+    }
+
     // 테스트 참여하기
     @GetMapping("/engage/{testId}")
     public ResponseEntity<String> updateUsersCntNPlayedTestList(@PathVariable("testId")Long testId,
@@ -129,6 +140,16 @@ public class TestApiController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(message);
     }
+
+    //테스트 참여 중인지 확인
+    @GetMapping("/isEngaging/{testId}")
+    public ResponseEntity<Boolean> findIsEngaging(@PathVariable("testId")Long testId,
+                                                                @RequestParam("email")String email){
+        Boolean isEngaging = testService.findEngageState(testId, email);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(isEngaging);
+    }
+
 
     //AI 추천 게임
     @GetMapping("/ai")
@@ -144,5 +165,28 @@ public class TestApiController {
         List<Test> keywordTests = testService.findTestByKeyword(keyword);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new GetTestSearchResponse(keywordTests));
+    }
+
+    //프로젝트 모집인원
+    @GetMapping("/getRecruitedCount/{testId}")
+    public ResponseEntity<Integer> getRecruitedUserCount(@PathVariable("testId")Long testId){
+        Integer count = testService.findById(testId).getUsersCnt();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(count);
+    }
+
+    // 참여한 프로젝트 리스트
+    @GetMapping("/engagedList")
+    public ResponseEntity<List<Test>> getEnagedTestList(@RequestParam("email")String email){
+        List<Long> testIds = testService.findEngagedTestIds(email);
+        List<Test> engagedTests = new ArrayList<>();
+        for(Long testId: testIds){
+            Test dto = testService.findById(testId);
+            engagedTests.add(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(engagedTests);
     }
 }
